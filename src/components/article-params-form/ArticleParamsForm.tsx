@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, FormEvent } from 'react';
 import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 import cn from 'classnames';
@@ -24,22 +24,22 @@ interface ArticleParamsFormProps {
 export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	onFormSubmit,
 }) => {
-	const [isOpen, setIsOpen] = useState(false); // Состояние для открытия/закрытия формы
+	const [isMenuOpen, setIsMenuOpen] = useState(false); // Состояние для открытия/закрытия формы
 	const containerOpenStyle = styles.container_open;
-	const isAsideOpen = isOpen ? containerOpenStyle : '';
+	const isAsideOpen = isMenuOpen ? containerOpenStyle : '';
 	const formRef = useRef<HTMLDivElement>(null);
 	const [formData, setFormData] =
 		useState<ArticleStateType>(defaultArticleState); //состояния формы
 
 	useEffect(() => {
 		//проверям если форма сайдбара закрыта, то функция ничего не возвращает
-		if (!isOpen) {
+		if (!isMenuOpen) {
 			return;
 		}
 		// При клике вне формы закрываем форму
 		const handleClickOutside = (event: MouseEvent) => {
 			if (formRef.current && !formRef.current.contains(event.target as Node)) {
-				setIsOpen(false);
+				setIsMenuOpen(false);
 			}
 		};
 
@@ -48,13 +48,14 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 		return () => {
 			document.removeEventListener('mousedown', handleClickOutside);
 		};
-	}, [isOpen, formRef]);
+	}, [isMenuOpen, formRef]);
 
 	const handleButtonClick = () => {
-		setIsOpen(!isOpen); // Изменяем состояние при клике на кнопку
+		setIsMenuOpen(!isMenuOpen); // Изменяем состояние при клике на кнопку
 	};
 
-	const handleApplyButtonClick = () => {
+	const handleApplyFormSubmit = (evt: FormEvent) => {
+		evt.preventDefault();
 		// Применить значения к контенту сайта
 		onFormSubmit(formData);
 	};
@@ -68,9 +69,9 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 
 	return (
 		<>
-			<ArrowButton isOpen={isOpen} onClick={handleButtonClick} />
+			<ArrowButton isOpen={isMenuOpen} onClick={handleButtonClick} />
 			<aside ref={formRef} className={cn(styles.container, isAsideOpen)}>
-				<form className={styles.form}>
+				<form className={styles.form} onSubmit={handleApplyFormSubmit}>
 					<h2 className={styles.form_title}>Задайте параметры</h2>
 					<Select
 						options={fontFamilyOptions}
@@ -120,16 +121,10 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 							type='button'
 							onClick={handleResetButtonClick}
 						/>
-						<Button
-							title='Применить'
-							type='button'
-							onClick={handleApplyButtonClick}
-						/>
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>
 		</>
 	);
 };
-
-// const applyFormData = (formData: ArticleStateType) => {};
