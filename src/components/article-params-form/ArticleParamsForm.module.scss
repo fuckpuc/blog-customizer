@@ -9,6 +9,7 @@
 }
 
 .container_open {
+	overflow-x: hidden;
 	transform: translate(0);
 }
 
@@ -16,6 +17,7 @@
 	display: flex;
 	flex-shrink: 0;
 	flex-direction: column;
+	gap: 50px;
 	box-sizing: border-box;
 	width: 616px;
 	height: auto;
@@ -29,4 +31,12 @@
 	display: flex;
 	justify-content: space-between;
 	margin-top: auto;
+}
+
+.form_title {
+	color: #000000;
+	font-weight: 800;
+	font-size: 31px;
+	font-family: 'Open Sans', sans-serif;
+	text-transform: uppercase;
 }
